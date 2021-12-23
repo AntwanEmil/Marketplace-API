@@ -12,7 +12,28 @@ use App\Models\Item;
 
 class ItemController extends Controller
 {
+    public function ViewItem($id)
+    {
+      
+        if (Item::where('id', $id)->exists()) {
+            $item = Item::where('items.id', $id)
+            ->join('users','users.id','=','items.owner_id')
+            ->select('items.*','users.Storename')
+            ->first();
+            
+            return response()->json([
+                'item: ' => $item
+            ]);
+
+           // return view('products.ProductDetails', ['item' => $item]);
+        } else {
+          
+           return response()->json([
+               'message' =>'fail ,No such a product'
+           ]);
+        }
     
+    }
     
     public function search(Request $request)
     {
