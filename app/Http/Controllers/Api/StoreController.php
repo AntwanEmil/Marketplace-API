@@ -41,4 +41,29 @@ class StoreController extends Controller
         ]);
     }
     }
+    
+     public function addItem(Request $request){
+        $fields = $request->validate([
+            'item_id' => ['required', 'string', 'max:255']
+        ]);
+
+        $user = auth()->user();
+        if (Item::where('id', $fields['item_id'])->exists()) {
+        $item = Item::select('items.*')->where('id',$fields['item_id'])->get()->first();
+        if($item->owner_id == $user-> id) return 'Error you already own this item';
+        $owner = User::select("users.*")->where('id', $item->owner_id)->get()->first();
+        DB::table('sellers')->insert(
+            ['item_id' => $item->id, 'owner_id' =>$owner->id , 'seller_id' => $user->id]
+        );
+        $user->save();
+        $owner->save();
+        $item->save();
+        $op  = 'addItem';
+        $this-> update_report($op, $item , $user , $owner , $item->price);
+        return 'success Item has been added to be sold on your store';
+        }
+        else return 'Error , not a valid item_id';
+
+
+    }
 }
