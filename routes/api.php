@@ -31,7 +31,8 @@ Route::post('/login' , [AuthController::class , 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function(){
     // functions that require authentiaction
-
+    Route::post('/addProduct', [ItemController::class, 'store']);
+    Route::post('/updateProduct', [ItemController::class, 'Update']);
     Route::post('/logout',[AuthController::class, 'logout']);
 
 
