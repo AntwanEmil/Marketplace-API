@@ -41,6 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/updateProfile',[ProfileController::class, 'updatePro']);
     Route::get('ProductDetail/{id}', [ItemController::class, 'ViewItem']);
+    
+    Route::post('/AddProductForSale',[StoreController::class,'addItem']);
+
     Route::post('/logout',[AuthController::class, 'logout']);
 
 
