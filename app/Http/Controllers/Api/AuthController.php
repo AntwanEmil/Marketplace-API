@@ -48,4 +48,37 @@ class AuthController extends Controller
 
     return  response()->json($reponse, 201);
     }
+    
+    
+    
+     public function login(Request $request){
+        $fields = $request->validate([
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'password' => ['required', 'string', 'min:8'],
+        ]);
+        //check credentials 
+        $user = User::where('email' , $fields['email'])->first();
+        if(!$user || !Hash::check($fields['password'], $user->password)){
+            return response()->json([
+                'message' => 'incorrect email or password'
+            ], 401);
+        }
+
+        $token = $user->createToken('myapptoken')->plainTextToken;
+
+        $reponse = [
+            'user' => $user,
+            'token'=> $token
+        ];
+
+    return  response()->json($reponse, 201);
+    }
+
+    
+    
+    
+    
+    
+    
+    
 }
