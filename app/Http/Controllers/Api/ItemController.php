@@ -12,6 +12,33 @@ use App\Models\Item;
 
 class ItemController extends Controller
 {
+    
+    
+    public function search(Request $request)
+    {
+        $fields = $request->validate([
+            'name' => ['required', 'string', 'max:255']
+        ]);
+        $search_text= $fields['name'];
+        $items=Item::where('items.name','LIKE','%'.$search_text.'%')
+         ->join('users', 'items.owner_id','=','users.id')
+        ->select ('items.*' , 'users.Storename')->get();
+        return $items;
+    }
+
+ //view all products (that doesn't belong to the user)
+    public function products(Request $request){
+        $user = auth()->user();
+        $orig_items = Item::select('items.*')->where('owner_id','!=',$user->id)
+        ->join('users', 'items.owner_id','=','users.id')
+        ->select ('items.*' , 'users.Storename')
+        ->get();  
+        return response()->json([
+            'data: ' => $orig_items
+        ]) ;
+    }
+
+    
 //add new product
     public function store(Request $request){
         if (auth()->user()) {
