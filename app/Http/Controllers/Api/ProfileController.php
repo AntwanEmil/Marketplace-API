@@ -36,5 +36,41 @@ class ProfileController extends Controller
                ]);
         
     }
+    public function updatePro(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string'],
+            'Storename' => ['required', 'string'],
+            'email' => ['required', 'string'],
+            'password' => ['required'],
+            're' =>['required']
+        ]);
+
+        $user = auth()->user();
+        $user->name = $request->input('name');
+        $user->Storename = $request->input('Storename');
+        $user->email = $request->input('email');
+        $s = strlen($request->input('password'));
+        $pass = $request->input('password');
+        if ($request->input('password') == $request->input('re') && $pass != null) {
+            if ($s >= 8) {
+                $user->password = Hash::make($request->input('password'));
+            } else {
+                return response()->json([
+                    'message' => 'password has to be more than 8 characters',
+                ]);
+            }
+
+        } else {
+            return response()->json([
+                'message' => 'Passwords don`t match',
+            ]);
+        }
+
+        $user->save();
+        return response()->json([
+            'message' => 'profile has been updated successfully',
+        ]);
+    }
 
 }
