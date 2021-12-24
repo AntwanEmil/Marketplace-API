@@ -173,3 +173,50 @@ class ItemController extends Controller
         }
     }
 }
+
+public function destroy(Request $request)
+    {
+        $fields = $request->validate([
+            'id' => ['required']
+        ]);
+
+        if (Item::where('id', $fields['id'])->exists()) {
+            $item = Item::where('id', $fields['id'])->get()->first();
+          if($item->owner_id == auth()->user()->id){
+            DB::table('purshased_items')->where('item_id', $fields['id'])->delete();
+
+        DB::table('sellers')->where('item_id',$fields['id'])->delete();
+        Item::destroy($fields['id']);
+        return response()->json([
+           'message'=> 'success , item has been deleted successfully'
+        ],433);
+       
+        }
+        else{
+            return response()->json([
+                'message'=> "you don't own this item to delete"
+            ],450);
+        }
+    }
+    else{
+        return response()->json([
+            'message'=> 'fail No such an item'
+        ],450);
+        
+        }
+    }
+
+public function ViewForBuy($id){
+
+        if (Item::where('id', $id)->exists()) {
+            $item = Item::where('items.id', '=',$id)->join('users','items.owner_id','=','users.id')
+                    ->select('items.*','users.Storename')->get()->first();
+
+            return $item;
+        }        
+        else{
+            $message = 'fail , no such product exists';
+            return $message;
+        }
+
+    }
