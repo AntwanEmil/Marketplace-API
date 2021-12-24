@@ -12,6 +12,32 @@ use App\Models\Item;
 
 class ItemController extends Controller
 {
+      //update report
+      public function update_report($op, $item,$user){
+        // adding description to transactions table //
+        $name = $item->name;
+        $description_add =  'a new product " ' . $name  .  ' " is added to your store with price= '.$item->price;
+        $description_update =  'your product: " ' . $name . ' " is updated ';
+
+        if($op == 'store'){
+            $transaction_id = DB::table('transactions')->insertGetId([
+                'description' => $description_add
+            ]);
+        }
+        else {
+            $transaction_id = DB::table('transactions')->insertGetId([
+                'description' => $description_update
+            ]);
+        }
+
+        // adding mapping info to reports table //
+        DB::table('reports')->insert(
+            ['transaction_id' => $transaction_id, 'user_id' => $user->id]
+        );
+
+
+    }
+
     public function ViewItem($id)
     {
       
@@ -60,7 +86,7 @@ class ItemController extends Controller
     }
 
     
-//add new product
+    //add new product
     public function store(Request $request){
         if (auth()->user()) {
             $user = auth()->user();
@@ -145,5 +171,5 @@ class ItemController extends Controller
             ];
             return response()->json($reponse, 215);
         }
-      
+    }
 }

@@ -34,16 +34,18 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     // functions that require authentiaction
     Route::post('/addProduct', [ItemController::class, 'store']);
     Route::post('/updateProduct', [ItemController::class, 'Update']);
-    Route::post('/products' , [ItemController::class , 'products']);
+    Route::get('/products' , [ItemController::class , 'products']);
     Route::post('/search' , [ItemController::class , 'search']);
     
-     Route::get('store/{id}', [StoreController::class,'show']);
+    Route::get('store/{id}', [StoreController::class,'show']);
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/updateProfile',[ProfileController::class, 'updatePro']);
     Route::get('ProductDetail/{id}', [ItemController::class, 'ViewItem']);
     
     Route::post('/AddProductForSale',[StoreController::class,'addItem']);
-
+    Route::post('/RemoveSoldProduct',[StoreController::class,'removeSoldItem'])->name('removeSoldItem');
+    Route::post('/report', [StoreController::class, 'report' ]);
+    Route::post('/transferCash',[StoreController::class,'transferCash'])->name('transferCash');
     Route::post('/logout',[AuthController::class, 'logout']);
 
 
