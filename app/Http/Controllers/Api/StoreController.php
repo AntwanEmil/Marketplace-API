@@ -66,4 +66,55 @@ class StoreController extends Controller
 
 
     }
+    
+    public function buyItem(Request $request){
+        $user = auth()->user();
+        $fields = $request->validate([
+            'item_id' => ['required'],
+            'amount' => ['required', 'integer']
+        ]);
+        if(Item::where('id',$request['item_id'])->exists()){
+        $item = Item::select('items.*')->where('id',$fields['item_id'])->get()->first();
+        $qty = $fields['amount'];
+        $owner = User::select("users.*")->where('id', $item->owner_id)->get()->first();
+
+
+
+        if($user->balance < ($item->price * $qty)){
+            return response()->json([
+                'message' => 'fail You don\'t have enough balance :(( '
+            ],476);
+            
+        }
+        if($qty > $item->amount){
+            return response()->json([
+                'message' => 'fail , The quantity is greater than the available amount !! '
+            ],478);
+           
+        }
+        DB::table('purshased_items')->insert(
+            ['user_id'=>$user->id, 'item_id' => $item->id, 'amount' =>$qty]
+        );
+        $user->balance -= ($item->price * $qty);
+        $owner->balance += ($item->price * $qty);
+        $item->amount -= $qty;
+        $user->save();
+        $owner->save();
+        $item->save();
+
+        $reponse = [
+            'message' => 'success , Your order has been done successfully',
+            'item'=> $item->name
+        ];
+        $op  = 'buyItem';
+        $this-> update_report($op, $item , $user , $owner , $item->price);
+        return  response()->json($reponse, 201);
+    }
+    else{
+        return response()->json([
+            'message' => 'item is not found',
+            
+        ],477);
+    }
+    }
 }
