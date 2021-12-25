@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth:sanctum']], function(){
     Route::post('/addProduct', [ItemController::class, 'store']);
     Route::post('/updateProduct', [ItemController::class, 'Update']);
     Route::post('/delete', [ItemController::class, 'destroy']);
-    Route::post('/BuyProduct/{id}',[ItemController::class,'ViewForBuy']);
+    //Route::post('/BuyProduct/{id}',[ItemController::class,'ViewForBuy']);
     Route::post('/BuyProduct',[StoreController::class, 'buyItem']);
     Route::get('/products' , [ItemController::class , 'products']);
     Route::post('/search' , [ItemController::class , 'search']);

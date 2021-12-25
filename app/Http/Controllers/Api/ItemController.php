@@ -172,7 +172,7 @@ class ItemController extends Controller
             return response()->json($reponse, 215);
         }
     }
-}
+
 
 public function destroy(Request $request)
     {
@@ -220,3 +220,4 @@ public function ViewForBuy($id){
         }
 
     }
+}

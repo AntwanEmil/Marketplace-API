@@ -219,11 +219,11 @@ public function transferCash(Request $request){
     ]);
     $store = User::select('users.*')->where('id',$fields['store_id'])->get()->first();
     if (!$store) return 'Error , store_id doesn\'t exist';
-    if ($store->id == $user->id) return responce()->json([
+    if ($store->id == $user->id) return response()->json([
         'message' =>  'Error , you can\'t transfer money to yourself'
     ],478);
     $transfered_cash = $fields['amount'];
-    if($transfered_cash > $user->balance) return responce()->json([
+    if($transfered_cash > $user->balance) return response()->json([
         'message' =>  'Error , your balance is less than the amount to be transferred'
     ],479);
     else{
